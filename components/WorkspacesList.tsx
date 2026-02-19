@@ -6,14 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { AlertCircle, Loader2, FolderOpen, ChevronRight } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import Link from 'next/link'
-
-interface Workspace {
-  id: number
-  name: string
-  redirect_url: string
-  created_at: string
-  type?: string
-}
+import type { Workspace } from '@/lib/types/workspace'
 
 interface WorkspacesListProps {
   workspaces: Workspace[] | null
@@ -22,8 +15,13 @@ interface WorkspacesListProps {
   onRefresh?: () => void
 }
 
-const getTypeColor = (type?: string) => {
+const getTypeColor = (type?: string | boolean) => {
   if (!type) return 'bg-blue-950/50 text-blue-300 border-blue-500/30'
+  if (typeof type === 'boolean') {
+    return type
+      ? 'bg-emerald-950/50 text-emerald-300 border-emerald-500/30'
+      : 'bg-slate-900/50 text-slate-300 border-slate-500/30'
+  }
   const lowerType = type.toLowerCase()
   switch (lowerType) {
     case 'personal':
@@ -37,8 +35,9 @@ const getTypeColor = (type?: string) => {
   }
 }
 
-const getTypeLabel = (type?: string) => {
+const getTypeLabel = (type?: string | boolean) => {
   if (!type) return 'Standard'
+  if (typeof type === 'boolean') return type ? 'Public' : 'Private'
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
