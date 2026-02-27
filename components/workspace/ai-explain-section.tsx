@@ -3,10 +3,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { Sparkles, Send, Loader2 } from "lucide-react"
-import { useState } from "react"
 import { ExplainResponse } from "@/lib/types/workspace"
+import { AIResponseDisplay } from "./ai-response-display"
 
 interface AIExplainSectionProps {
   question: string
@@ -72,35 +71,7 @@ export function AIExplainSection({
           </Button>
         </div>
 
-        {aiResponse && (
-          <div className="space-y-4 pt-4 border-t border-border/30">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <h4 className="font-semibold text-sm">Summary</h4>
-                <Badge variant="secondary" className="text-xs">
-                  {(aiResponse.confidence_score * 100).toFixed(0)}% confident
-                </Badge>
-              </div>
-              <p className="text-sm text-foreground leading-relaxed">
-                {aiResponse.summary}
-              </p>
-            </div>
-
-            {aiResponse.reasoning && aiResponse.reasoning.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="font-semibold text-sm">Reasoning</h4>
-                <ul className="space-y-1">
-                  {aiResponse.reasoning.map((reason, index) => (
-                    <li key={index} className="text-sm text-muted-foreground flex gap-2">
-                      <span className="text-primary font-medium flex-shrink-0">•</span>
-                      <span>{reason}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
+        {aiResponse && <AIResponseDisplay response={aiResponse} />}
       </CardContent>
     </Card>
   )
