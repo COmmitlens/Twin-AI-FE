@@ -158,7 +158,7 @@ export default function WorkspacePage() {
     }
   }
 
-  // Fetch related commits
+  // Fetch related commits--
   const fetchRelatedCommits = async (commitFileId: number) => {
     setRelatedLoading(true)
 
