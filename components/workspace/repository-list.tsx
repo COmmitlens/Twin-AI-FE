@@ -3,27 +3,29 @@ import { Repository } from "@/lib/types/workspace"
 import { GitBranch, Lock, Unlock } from "lucide-react"
 
 interface RepositoryListProps {
-  repositories: Repository[]
+  repositories?: Repository[]
   onRepoClick: (repo: Repository) => void
 }
 
 export function RepositoryList({ repositories, onRepoClick }: RepositoryListProps) {
+  const repositoryList = repositories ?? []
+
   return (
     <Card className="border border-border/50 shadow-sm hover:shadow-md transition-shadow">
       <CardHeader className="pb-4">
         <CardTitle className="text-xl">Repositories</CardTitle>
         <CardDescription className="text-sm">
-          {repositories.length} {repositories.length === 1 ? "repository" : "repositories"} • Click to view commits
+          {repositoryList.length} {repositoryList.length === 1 ? "repository" : "repositories"} • Click to view commits
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {repositories.length === 0 ? (
+        {repositoryList.length === 0 ? (
           <div className="py-8 text-center">
             <p className="text-muted-foreground">No repositories found</p>
           </div>
         ) : (
           <div className="space-y-2">
-            {repositories.map((repo) => (
+            {repositoryList.map((repo) => (
               <button
                 key={repo.id}
                 onClick={() => onRepoClick(repo)}

@@ -30,6 +30,31 @@ function getStatusColor(status: string): string {
   }
 }
 
+function getPatchLineColor(line: string): string {
+  if (line.startsWith("+") && !line.startsWith("+++")) {
+    return "text-green-700 dark:text-green-400"
+  }
+
+  if (line.startsWith("-") && !line.startsWith("---")) {
+    return "text-red-700 dark:text-red-400"
+  }
+
+  if (line.startsWith("@@")) {
+    return "text-blue-700 dark:text-blue-400"
+  }
+
+  if (
+    line.startsWith("diff ") ||
+    line.startsWith("index ") ||
+    line.startsWith("+++") ||
+    line.startsWith("---")
+  ) {
+    return "text-muted-foreground/80"
+  }
+
+  return "text-muted-foreground"
+}
+
 export function CommitDetailsView({
   selectedCommit,
   commitDetails,
@@ -124,9 +149,17 @@ export function CommitDetailsView({
             <div className="space-y-2">
               <p className="text-sm font-semibold">Patch Preview</p>
               <div className="p-3 rounded-lg border border-border/50 bg-muted/20 overflow-x-auto">
-                <pre className="font-mono text-xs text-muted-foreground whitespace-pre-wrap break-words max-h-64 overflow-y-auto">
-                  {commitDetails.Patch.substring(0, 500)}
-                  {commitDetails.Patch.length > 500 && "..."}
+                <pre className="font-mono text-xs whitespace-pre-wrap break-words max-h-64 overflow-y-auto">
+                  {commitDetails.Patch.substring(0, 500)
+                    .split("\n")
+                    .map((line, index) => (
+                      <span key={`${index}-${line}`} className={`block ${getPatchLineColor(line)}`}>
+                        {line || " "}
+                      </span>
+                    ))}
+                  {commitDetails.Patch.length > 500 && (
+                    <span className="block text-muted-foreground">...</span>
+                  )}
                 </pre>
               </div>
             </div>

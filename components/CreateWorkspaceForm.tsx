@@ -50,7 +50,7 @@ export function CreateWorkspaceForm({ onWorkspaceCreated }: CreateWorkspaceFormP
     setLoading(true)
 
     try {
-      const response = await api.post('http://localhost:8000/v1/workspace/create', {
+      const response = await api.post('/workspace/create', {
         name: name.trim(),
         type: type === 'true',
       })

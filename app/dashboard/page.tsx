@@ -18,7 +18,7 @@ function DashboardContent() {
     setError(null)
 
     try {
-      const response = await api.post('http://localhost:8000/v1/workspace/getall_workspace')
+      const response = await api.post('/workspace/getall_workspace')
 
       if (response.data.message === 'Success') {
         setWorkspaces(Array.isArray(response.data.data) ? response.data.data : [response.data.data])
