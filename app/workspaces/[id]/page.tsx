@@ -149,7 +149,7 @@ export default function WorkspacePage() {
       const response = await workspaceAPI.getCommitDetails(commitId)
       if (response.message === "Success" && response.data) {
         setCommitDetails(response.data)
-        fetchRelatedCommits(commitId)
+        fetchRelatedCommits(response.data.ID)
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to fetch commit details")
