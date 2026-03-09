@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Loader2, AlertCircle, Building2, User, CheckCircle, Mail } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -11,6 +11,23 @@ import { workspaceAPI } from "@/lib/api/workspace"
 import { WorkspaceDetails } from "@/lib/types/workspace"
 
 export default function AcceptInvitePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="text-center space-y-4">
+            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto" />
+            <p className="text-muted-foreground">Loading invitation details...</p>
+          </div>
+        </div>
+      }
+    >
+      <AcceptInviteContent />
+    </Suspense>
+  )
+}
+
+function AcceptInviteContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   
