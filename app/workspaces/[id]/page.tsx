@@ -369,6 +369,7 @@ export default function WorkspacePage() {
         )}
 
         {/* Commit Details View */}
+        {/* kk */}
         {currentView === "commitDetails" && (
           <div className="space-y-6">
             <CommitDetailsView
