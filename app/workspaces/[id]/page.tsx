@@ -54,7 +54,8 @@ export default function WorkspacePage() {
   const pageSize = 5
 
   // Commit details state
-  const [commitDetails, setCommitDetails] = useState<CommitDetail | null>(null)
+  const [commitFiles, setCommitFiles] = useState<CommitDetail[]>([])
+  const [selectedFile, setSelectedFile] = useState<CommitDetail | null>(null)
   const [commitDetailsLoading, setCommitDetailsLoading] = useState(false)
 
   // Related commits state
@@ -63,7 +64,7 @@ export default function WorkspacePage() {
 
   // AI Explain state
   const [question, setQuestion] = useState("")
-  const [aiResponse, setAiResponse] = useState<ExplainResponse | null>(null)
+  const [chatMessages, setChatMessages] = useState<{ question: string; response: ExplainResponse }[]>([])
   const [aiLoading, setAiLoading] = useState(false)
 
   // Workspace members state
@@ -140,16 +141,19 @@ export default function WorkspacePage() {
     }
   }
 
-  // Fetch commit details and related commits
+  // Fetch commit details (array of files changed)
   const fetchCommitDetails = async (commitId: number) => {
     setCommitDetailsLoading(true)
     setError(null)
+    setCommitFiles([])
+    setSelectedFile(null)
+    setRelatedCommits([])
+    setChatMessages([])
 
     try {
       const response = await workspaceAPI.getCommitDetails(commitId)
       if (response.message === "Success" && response.data) {
-        setCommitDetails(response.data)
-        fetchRelatedCommits(response.data.ID)
+        setCommitFiles(response.data)
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to fetch commit details")
@@ -158,12 +162,16 @@ export default function WorkspacePage() {
     }
   }
 
-  // Fetch related commits--
-  const fetchRelatedCommits = async (commitFileId: number) => {
+  // Handle file selection — fetch related commits for that specific file
+  const handleFileSelect = async (file: CommitDetail) => {
+    setSelectedFile(file)
+    setRelatedCommits([])
+    setChatMessages([])
+    setQuestion("")
     setRelatedLoading(true)
 
     try {
-      const response = await workspaceAPI.getRelatedCommits(commitFileId)
+      const response = await workspaceAPI.getRelatedCommitsForFile(file.ID)
       if (Array.isArray(response)) {
         setRelatedCommits(response)
       }
@@ -176,14 +184,15 @@ export default function WorkspacePage() {
 
   // Handle AI explain
   const handleAskAI = async () => {
-    if (!question.trim() || !selectedCommit) return
+    if (!question.trim() || !selectedFile) return
 
     setAiLoading(true)
     setError(null)
 
     try {
-      const response = await workspaceAPI.explainCommit(selectedCommit.id, question)
-      setAiResponse(response)
+      const response = await workspaceAPI.explainCommit(selectedFile.ID, question)
+      setChatMessages((prev) => [...prev, { question, response }])
+      setQuestion("")
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to get AI explanation")
     } finally {
@@ -262,9 +271,10 @@ export default function WorkspacePage() {
   const handleBackToCommits = () => {
     setCurrentView("commits")
     setSelectedCommit(null)
-    setCommitDetails(null)
+    setCommitFiles([])
+    setSelectedFile(null)
     setRelatedCommits([])
-    setAiResponse(null)
+    setChatMessages([])
     setQuestion("")
     setError(null)
   }
@@ -373,23 +383,29 @@ export default function WorkspacePage() {
           <div className="space-y-6">
             <CommitDetailsView
               selectedCommit={selectedCommit}
-              commitDetails={commitDetails}
+              commitFiles={commitFiles}
+              selectedFile={selectedFile}
               loading={commitDetailsLoading}
+              onFileSelect={handleFileSelect}
             />
 
-            <RelatedCommitsSection
-              relatedCommits={relatedCommits}
-              loading={relatedLoading}
-            />
+            {selectedFile && (
+              <>
+                <RelatedCommitsSection
+                  relatedCommits={relatedCommits}
+                  loading={relatedLoading}
+                />
 
-            <AIExplainSection
-              question={question}
-              onQuestionChange={setQuestion}
-              aiResponse={aiResponse}
-              loading={aiLoading}
-              onSubmit={handleAskAI}
-              disabled={!selectedCommit}
-            />
+                <AIExplainSection
+                  question={question}
+                  onQuestionChange={setQuestion}
+                  chatMessages={chatMessages}
+                  loading={aiLoading}
+                  onSubmit={handleAskAI}
+                  disabled={false}
+                />
+              </>
+            )}
           </div>
         )}
         </div>

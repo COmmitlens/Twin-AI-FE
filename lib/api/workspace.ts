@@ -31,16 +31,16 @@ export const workspaceAPI = {
     return response.data;
   },
 
-  async getRelatedCommits(commitFileId: number) {
+  async getRelatedCommitsForFile(commitFileId: number) {
     const response = await api.get<RelatedCommit[]>(
       `/github-repository/commit-files/${commitFileId}/related`
     );
     return response.data;
   },
 
-  async explainCommit(commitId: number, question: string) {
+  async explainCommit(commitFileId: number, question: string) {
     const response = await api.post<ExplainResponse>(
-      `/github-repository/commit-files/${commitId}/explain`,
+      `/github-repository/commit-files/${commitFileId}/explain`,
       { question: question.trim() }
     );
     return response.data;

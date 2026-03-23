@@ -65,7 +65,7 @@ export interface CommitDetail {
 
 export interface CommitDetailsResponse {
   message: string;
-  data?: CommitDetail;
+  data?: CommitDetail[];
 }
 
 export interface RelatedCommit {
