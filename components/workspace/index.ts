@@ -7,3 +7,4 @@ export { AIExplainSection } from "./ai-explain-section";
 export { WorkspaceHeader } from "./workspace-header";
 export { WorkspaceMembers } from "./workspace-members";
 export { InviteUserModal } from "./invite-user-modal";
+export { WorkspaceChatPanel } from "./workspace-chat-panel";

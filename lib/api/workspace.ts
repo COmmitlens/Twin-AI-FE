@@ -7,6 +7,7 @@ import {
   ExplainResponse,
   WorkspaceDetailsResponse,
   AcceptInviteResponse,
+  QueryResponse,
 } from "@/lib/types/workspace";
 
 export const workspaceAPI = {
@@ -94,6 +95,14 @@ export const workspaceAPI = {
       `/workspace/accept-invite`,
       { workspace_id: workspaceId },
       { headers: { Authorization: `Bearer ${jwt}` } }
+    );
+    return response.data;
+  },
+
+  async queryWorkspace(workspaceId: string, question: string) {
+    const response = await api.post<QueryResponse>(
+      `/workspace/${workspaceId}/query`,
+      { query: question.trim() }
     );
     return response.data;
   },

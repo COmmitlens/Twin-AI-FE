@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
 import { Loader2, UserPlus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -58,6 +59,7 @@ export function InviteUserModal({
 
     try {
       await onInvite(email, role)
+      toast.success("Invitation sent successfully")
       setEmail("")
       setRole("member")
       onInviteSuccess()

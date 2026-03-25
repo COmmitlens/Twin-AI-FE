@@ -133,3 +133,22 @@ export interface AcceptInviteResponse {
   message: string;
   data?: any;
 }
+
+export interface QuerySource {
+  fileName: string;
+  commitSHA: string;
+  repoName: string;
+}
+
+export interface QueryResponse {
+  answer: string;
+  action_items: string[];
+  code_patch: string;
+  impact: string;
+  sources: QuerySource[];
+}
+
+export interface WorkspaceChatMessage {
+  question: string;
+  response: QueryResponse;
+}

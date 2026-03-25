@@ -14,6 +14,7 @@ import {
   WorkspaceHeader,
   WorkspaceMembers,
   InviteUserModal,
+  WorkspaceChatPanel,
 } from "@/components/workspace"
 import {
   Repository,
@@ -411,6 +412,12 @@ export default function WorkspacePage() {
         )}
         </div>
       </div>
+
+      {/* Workspace AI Chat */}
+      <WorkspaceChatPanel
+        workspaceId={params.id as string}
+        onQuery={(question) => workspaceAPI.queryWorkspace(params.id as string, question)}
+      />
 
       {/* Invite User Modal */}
       <InviteUserModal
