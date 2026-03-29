@@ -15,6 +15,7 @@ import {
   WorkspaceMembers,
   InviteUserModal,
   WorkspaceChatPanel,
+  WorkspaceSettingsPanel,
 } from "@/components/workspace"
 import {
   Repository,
@@ -412,6 +413,9 @@ export default function WorkspacePage() {
         )}
         </div>
       </div>
+
+      {/* Workspace Settings */}
+      <WorkspaceSettingsPanel currentWorkspaceId={params.id as string} />
 
       {/* Workspace AI Chat */}
       <WorkspaceChatPanel
