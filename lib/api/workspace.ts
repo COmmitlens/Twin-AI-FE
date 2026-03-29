@@ -106,4 +106,9 @@ export const workspaceAPI = {
     );
     return response.data;
   },
+
+  async getAllWorkspaces() {
+    const response = await api.post("/workspace/getall_workspace");
+    return response.data;
+  },
 };

@@ -126,7 +126,7 @@ export function WorkspacesList({ workspaces, loading, error, onRefresh }: Worksp
           {workspaces.map((workspace) => (
             <Link
               key={workspace.id}
-              href={`${workspace.redirect_url || `/workspaces/${workspace.id}`}`}
+              href={`/workspaces/${workspace.id}`}
               className="group transition-all duration-200"
             >
               <div className="h-full p-4 rounded-lg border border-border/50 bg-card/50 hover:bg-card/80 hover:border-accent/50 transition-all duration-200 cursor-pointer">
