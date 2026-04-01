@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { LogOut } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 
 export function Header() {
 	const { user, logout } = useAuth();
@@ -35,14 +35,19 @@ export function Header() {
 				</div>
 
 				<div className="flex items-center gap-3">
-					<Avatar className="h-9 w-9">
-						<AvatarFallback>{initials}</AvatarFallback>
-					</Avatar>
+					<button
+						onClick={() => router.push("/profile")}
+						className="flex items-center gap-3 rounded-lg px-2 py-1 hover:bg-accent transition-colors"
+					>
+						<Avatar className="h-9 w-9">
+							<AvatarFallback>{initials}</AvatarFallback>
+						</Avatar>
 
-					<div className="hidden sm:block text-right">
-						<p className="text-sm font-medium text-foreground leading-none">{displayName}</p>
-						{displayEmail && <p className="text-xs text-muted-foreground mt-1">{displayEmail}</p>}
-					</div>
+						<div className="hidden sm:block text-right">
+							<p className="text-sm font-medium text-foreground leading-none">{displayName}</p>
+							{displayEmail && <p className="text-xs text-muted-foreground mt-1">{displayEmail}</p>}
+						</div>
+					</button>
 
 					<Button variant="outline" size="sm" onClick={handleLogout}>
 						<LogOut className="h-4 w-4" />

@@ -152,3 +152,24 @@ export interface WorkspaceChatMessage {
   question: string;
   response: QueryResponse;
 }
+
+export interface UserData {
+  id: number;
+  email: string;
+  name: string;
+  language: string;
+  username: string;
+}
+
+export interface UserDataResponse {
+  message: string;
+  data?: UserData;
+}
+
+export interface UpdateUserParam {
+  user_id: number;
+  name: string;
+  role: string;
+  language: string;
+  username: string;
+}
