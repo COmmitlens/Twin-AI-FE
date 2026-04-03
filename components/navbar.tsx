@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Code2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
+  const router = useRouter();
   return (
     <nav className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -33,7 +35,7 @@ export function Navbar() {
             For Teams
           </a>
         </div>
-        <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+        <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => router.push("/login")}>
           Get Started
         </Button>
       </div>

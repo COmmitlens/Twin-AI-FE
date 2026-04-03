@@ -114,9 +114,15 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     try {
       const response = await api.get<{ message: string; data: { url: string } }>("/auth/google");
-      window.location.href = response.data.data.url;
+      const url = response.data.data.url;
+      // Validate that the redirect URL is a legitimate Google OAuth URL
+      if (!url.startsWith("https://accounts.google.com/")) {
+        setApiError("Invalid OAuth redirect URL");
+        setIsGoogleLoading(false);
+        return;
+      }
+      window.location.href = url;
     } catch (error) {
-      console.error("Google login error:", error);
       setApiError("Failed to login with Google");
       setIsGoogleLoading(false);
     }

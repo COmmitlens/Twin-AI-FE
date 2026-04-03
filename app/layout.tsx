@@ -1,6 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
@@ -24,6 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script defer src="https://cloud.umami.is/script.js" data-website-id="2329264b-249a-4970-9c66-bc679cbea5d8" />
+      </head>
       <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
