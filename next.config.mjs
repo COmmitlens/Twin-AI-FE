@@ -22,11 +22,11 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval needed for Next.js dev; tighten in prod if possible
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is", // unsafe-eval needed for Next.js dev; tighten in prod if possible
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https:",
       "font-src 'self'",
-      "connect-src 'self' http://localhost:8080 https:",
+      "connect-src 'self' http://localhost:8080 https: https://cloud.umami.is",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",
