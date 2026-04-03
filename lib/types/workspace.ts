@@ -173,3 +173,48 @@ export interface UpdateUserParam {
   language: string;
   username: string;
 }
+
+export interface CreditOption {
+  id: number;
+  value: number;
+  price: { id: number; en: number };
+  points: { id: string; en: string }[];
+  other: { id: string; en: string };
+}
+
+export interface CreditOptionsResponse {
+  message: string;
+  data: CreditOption[];
+}
+
+export interface SubscribeResponse {
+  session_url: string;
+  session_id: string;
+}
+
+export interface Subscription {
+  id: number;
+  credit_option_id: number;
+  stripe_subscription_id: string;
+  status: string;
+  currency: string;
+  base_amount: number;
+  gst_amount: number;
+  total_amount: number;
+  current_period_end: string; // ISO date string from Go time.Time
+}
+
+export interface SubscriptionStatusResponse {
+  message: string;
+  data?: Subscription[];
+}
+
+export interface CancelSubResponse {
+  message: string;
+  data?: Subscription;
+}
+
+export interface SubscribeAPIResponse {
+  message: string;
+  data?: SubscribeResponse;
+}
