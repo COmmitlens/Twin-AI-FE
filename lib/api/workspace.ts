@@ -99,10 +99,18 @@ export const workspaceAPI = {
     return response.data;
   },
 
-  async queryWorkspace(workspaceId: string, question: string) {
+  async queryWorkspace(
+    workspaceId: string,
+    question: string,
+    author?: string,
+    dateRange?: { start_date: string; end_date: string }
+  ) {
+    const body: Record<string, unknown> = { query: question.trim() };
+    if (author) body.author = author;
+    if (dateRange) body.date_range = dateRange;
     const response = await api.post<QueryResponse>(
       `/workspace/${workspaceId}/query`,
-      { query: question.trim() }
+      body
     );
     return response.data;
   },
@@ -110,5 +118,10 @@ export const workspaceAPI = {
   async getAllWorkspaces() {
     const response = await api.post("/workspace/getall_workspace");
     return response.data;
+  },
+
+  async getSlackStatus(workspaceId: string) {
+    const response = await api.get(`/slack/status?workspace_id=${workspaceId}`);
+    return response.data as { connected: boolean; slack_team_name?: string };
   },
 };

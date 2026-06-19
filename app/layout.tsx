@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   description:
     "AI-powered code change explanations for GitHub commits. Understand why code changed, not just what changed.",
   generator: "v0.app",
+  icons: {
+    icon: "/rect87.png",
+    shortcut: "/rect87.png",
+    apple: "/rect87.png",
+  },
 };
 
 export default function RootLayout({
