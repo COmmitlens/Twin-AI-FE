@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import {
   Sparkles,
   Send,
@@ -16,15 +15,142 @@ import {
   ListChecks,
   ChevronDown,
   ChevronUp,
+  Calendar,
+  AtSign,
 } from "lucide-react"
 import ReactMarkdown from "react-markdown"
-import { WorkspaceChatMessage, QueryResponse } from "@/lib/types/workspace"
+import { WorkspaceChatMessage, QueryResponse, WorkspaceMember } from "@/lib/types/workspace"
 
 interface WorkspaceChatPanelProps {
   workspaceId: string
-  onQuery: (question: string) => Promise<QueryResponse>
+  members?: WorkspaceMember[]
+  onQuery: (
+    question: string,
+    author?: string,
+    dateRange?: { start_date: string; end_date: string }
+  ) => Promise<QueryResponse>
 }
 
+// ── Date Range Board ──────────────────────────────────────────────
+function DateRangeBoard({
+  startDate,
+  endDate,
+  onStartDate,
+  onEndDate,
+  onClear,
+}: {
+  startDate: string
+  endDate: string
+  onStartDate: (v: string) => void
+  onEndDate: (v: string) => void
+  onClear: () => void
+}) {
+  const hasRange = startDate || endDate
+  return (
+    <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border/50 bg-muted/20 text-xs">
+      <Calendar className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+      <div className="flex items-center gap-2 flex-1 flex-wrap">
+        <div className="flex items-center gap-1">
+          <label className="text-muted-foreground">From</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => onStartDate(e.target.value)}
+            className="bg-transparent border border-border/40 rounded-md px-1.5 py-0.5 text-xs text-foreground focus:outline-none focus:border-primary/50 cursor-pointer"
+          />
+        </div>
+        <div className="flex items-center gap-1">
+          <label className="text-muted-foreground">To</label>
+          <input
+            type="date"
+            value={endDate}
+            min={startDate || undefined}
+            onChange={(e) => onEndDate(e.target.value)}
+            className="bg-transparent border border-border/40 rounded-md px-1.5 py-0.5 text-xs text-foreground focus:outline-none focus:border-primary/50 cursor-pointer"
+          />
+        </div>
+      </div>
+      {hasRange && (
+        <button
+          onClick={onClear}
+          className="text-muted-foreground hover:text-foreground transition-colors"
+          title="Clear date range"
+        >
+          <X className="w-3 h-3" />
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ── Mention Dropdown ──────────────────────────────────────────────
+function MentionDropdown({
+  members,
+  filter,
+  onSelect,
+}: {
+  members: WorkspaceMember[]
+  filter: string
+  onSelect: (member: WorkspaceMember) => void
+}) {
+  const filtered = members.filter((m) =>
+    m.name.toLowerCase().includes(filter.toLowerCase())
+  )
+  if (filtered.length === 0) return null
+  return (
+    <div className="rounded-xl border border-border/60 bg-background shadow-lg overflow-hidden max-h-48 overflow-y-auto">
+      <div className="px-3 py-1.5 border-b border-border/40 bg-muted/30">
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <AtSign className="w-3 h-3" />
+          <span>Select a member</span>
+        </div>
+      </div>
+      {filtered.map((member) => (
+        <button
+          key={member.user_id}
+          onMouseDown={(e) => {
+            e.preventDefault()
+            onSelect(member)
+          }}
+          className="w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-primary/8 transition-colors"
+        >
+          <div className="w-6 h-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+            <User className="w-3 h-3 text-primary" />
+          </div>
+          <div className="min-w-0">
+            <div className="text-sm font-medium text-foreground truncate">@{member.name}</div>
+            <div className="text-xs text-muted-foreground truncate">{member.email}</div>
+          </div>
+          <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize flex-shrink-0">
+            {member.role}
+          </span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function extractAuthorEmail(query: string, members: WorkspaceMember[]): string | undefined {
+  const mentions = query.match(/@([\w.]+)/g)
+  if (!mentions) return undefined
+  for (const mention of mentions) {
+    const username = mention.slice(1).toLowerCase()
+    const found = members.find((m) => m.name.toLowerCase() === username)
+    if (found) return found.email
+  }
+  return undefined
+}
+
+function toISODateRange(start: string, end: string) {
+  if (!start && !end) return undefined
+  return {
+    start_date: start ? `${start}T00:00:00Z` : "",
+    end_date: end ? `${end}T23:59:59Z` : "",
+  }
+}
+
+// ── Source Badge ──────────────────────────────────────────────────
 function SourceBadge({ fileName, commitSHA, repoName }: { fileName: string; commitSHA: string; repoName: string }) {
   return (
     <div className="flex items-start gap-2 rounded-lg border border-border/40 bg-muted/30 px-3 py-2 text-xs hover:border-primary/30 hover:bg-primary/5 transition-colors">
@@ -153,13 +279,22 @@ function QueryResponseDisplay({ response }: { response: QueryResponse }) {
 const MIN_WIDTH = 320
 const MAX_WIDTH_RATIO = 0.6
 
-export function WorkspaceChatPanel({ workspaceId, onQuery }: WorkspaceChatPanelProps) {
+export function WorkspaceChatPanel({ workspaceId, members = [], onQuery }: WorkspaceChatPanelProps) {
   const [open, setOpen] = useState(false)
   const [question, setQuestion] = useState("")
   const [messages, setMessages] = useState<WorkspaceChatMessage[]>([])
   const [loading, setLoading] = useState(false)
   const [panelWidth, setPanelWidth] = useState(420)
   const [isDragging, setIsDragging] = useState(false)
+
+  // Date range
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
+
+  // @mention state
+  const [mentionFilter, setMentionFilter] = useState<string | null>(null)
+  const [mentionStart, setMentionStart] = useState(-1)
+
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const dragStartX = useRef(0)
@@ -204,13 +339,57 @@ export function WorkspaceChatPanel({ workspaceId, onQuery }: WorkspaceChatPanelP
     setIsDragging(true)
   }
 
+  // Detect @mention as user types
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value
+    const cursor = e.target.selectionStart ?? value.length
+    setQuestion(value)
+
+    if (members.length > 0) {
+      const textBeforeCursor = value.slice(0, cursor)
+      const atIdx = textBeforeCursor.lastIndexOf("@")
+      if (atIdx !== -1) {
+        const afterAt = textBeforeCursor.slice(atIdx + 1)
+        if (!afterAt.includes(" ")) {
+          setMentionFilter(afterAt)
+          setMentionStart(atIdx)
+          return
+        }
+      }
+    }
+    setMentionFilter(null)
+    setMentionStart(-1)
+  }
+
+  const handleMentionSelect = (member: WorkspaceMember) => {
+    const before = question.slice(0, mentionStart)
+    const after = question.slice(mentionStart + 1 + (mentionFilter?.length ?? 0))
+    const inserted = `@${member.name} `
+    const newValue = before + inserted + after
+    setQuestion(newValue)
+    setMentionFilter(null)
+    setMentionStart(-1)
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus()
+        const pos = before.length + inserted.length
+        textareaRef.current.setSelectionRange(pos, pos)
+      }
+    }, 0)
+  }
+
   const handleSubmit = async () => {
     if (!question.trim() || loading) return
     const q = question.trim()
     setQuestion("")
+    setMentionFilter(null)
     setLoading(true)
+
+    const author = extractAuthorEmail(q, members)
+    const dateRange = toISODateRange(startDate, endDate)
+
     try {
-      const response = await onQuery(q)
+      const response = await onQuery(q, author, dateRange)
       setMessages((prev) => [...prev, { question: q, response }])
     } finally {
       setLoading(false)
@@ -218,11 +397,21 @@ export function WorkspaceChatPanel({ workspaceId, onQuery }: WorkspaceChatPanelP
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape" && mentionFilter !== null) {
+      e.preventDefault()
+      setMentionFilter(null)
+      return
+    }
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !loading) {
       e.preventDefault()
       handleSubmit()
     }
   }
+
+  const resolvedAuthorEmail = question ? extractAuthorEmail(question, members) : undefined
+  const resolvedAuthorName = resolvedAuthorEmail
+    ? members.find((m) => m.email === resolvedAuthorEmail)?.name
+    : undefined
 
   return (
     <>
@@ -298,6 +487,7 @@ export function WorkspaceChatPanel({ workspaceId, onQuery }: WorkspaceChatPanelP
                 <p className="text-sm font-medium text-foreground">Ask about your workspace</p>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                   Ask questions about commits, code changes, bugs, or anything in your repositories.
+                  {members.length > 0 && " Type @ to mention a team member."}
                 </p>
               </div>
               <div className="flex flex-col gap-2 w-full mt-2">
@@ -360,17 +550,50 @@ export function WorkspaceChatPanel({ workspaceId, onQuery }: WorkspaceChatPanelP
         </div>
 
         {/* Input area */}
-        <div className="flex-shrink-0 border-t border-border/50 px-4 py-3 bg-background/80 backdrop-blur-sm">
-          <div className="flex gap-2 items-end">
-            <Textarea
+        <div className="flex-shrink-0 border-t border-border/50 px-4 py-3 bg-background/80 backdrop-blur-sm space-y-2">
+          {/* Date range board */}
+          <DateRangeBoard
+            startDate={startDate}
+            endDate={endDate}
+            onStartDate={setStartDate}
+            onEndDate={setEndDate}
+            onClear={() => { setStartDate(""); setEndDate("") }}
+          />
+
+          {/* Resolved author preview */}
+          {resolvedAuthorName && (
+            <div className="flex items-center gap-1.5 text-xs text-primary/80 px-1">
+              <AtSign className="w-3 h-3" />
+              <span>Filtering by <span className="font-semibold">@{resolvedAuthorName}</span></span>
+            </div>
+          )}
+
+          {/* Textarea + send + mention dropdown */}
+          <div className="relative flex gap-2 items-end">
+            {/* Mention dropdown — renders above the textarea */}
+            {mentionFilter !== null && members.length > 0 && (
+              <div className="absolute bottom-full mb-1 left-0 right-10 z-50">
+                <MentionDropdown
+                  members={members}
+                  filter={mentionFilter}
+                  onSelect={handleMentionSelect}
+                />
+              </div>
+            )}
+
+            <textarea
               ref={textareaRef}
               value={question}
-              onChange={(e) => setQuestion(e.target.value)}
+              onChange={handleChange}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about your codebase… (⌘↵ to send)"
-              className="min-h-[60px] max-h-[140px] resize-none text-sm flex-1"
-              disabled={loading}
+              placeholder={
+                members.length > 0
+                  ? "Ask about your codebase… type @ to mention (⌘↵ send)"
+                  : "Ask about your codebase… (⌘↵ to send)"
+              }
               rows={2}
+              disabled={loading}
+              className="flex-1 min-h-[60px] max-h-[140px] resize-none text-sm rounded-md border border-input bg-background px-3 py-2 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             />
             <Button
               onClick={handleSubmit}
@@ -385,7 +608,7 @@ export function WorkspaceChatPanel({ workspaceId, onQuery }: WorkspaceChatPanelP
               )}
             </Button>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
+          <p className="text-[10px] text-muted-foreground text-center">
             Searching across all repositories in this workspace
           </p>
         </div>

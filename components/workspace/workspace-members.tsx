@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2, Users, UserPlus, Mail, Shield, Eye, X, UserMinus } from "lucide-react"
+import { Loader2, Users, UserPlus, Mail, Shield, Eye, X, UserMinus, MessageSquare } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -21,8 +21,10 @@ import { WorkspaceMember } from "@/lib/types/workspace"
 interface WorkspaceMembersProps {
   members: WorkspaceMember[]
   loading: boolean
+  currentUserEmail?: string
   onInviteClick: () => void
   onRemoveMember: (userId: number) => Promise<void>
+  onMessageClick?: (member: WorkspaceMember) => void
 }
 
 const getRoleBadgeVariant = (role: string) => {
@@ -62,8 +64,10 @@ const getInitials = (name: string) => {
 export function WorkspaceMembers({
   members,
   loading,
+  currentUserEmail,
   onInviteClick,
   onRemoveMember,
+  onMessageClick,
 }: WorkspaceMembersProps) {
   const [memberToRemove, setMemberToRemove] = useState<WorkspaceMember | null>(null)
   const [removeLoading, setRemoveLoading] = useState(false)
@@ -150,6 +154,17 @@ export function WorkspaceMembers({
                       {getRoleIcon(member.role)}
                       {member.role}
                     </Badge>
+                    {onMessageClick && member.email?.toLowerCase() !== currentUserEmail?.toLowerCase() && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                        onClick={() => onMessageClick(member)}
+                        title="Send DM"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="icon"
