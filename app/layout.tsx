@@ -1,6 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
@@ -15,6 +16,11 @@ export const metadata: Metadata = {
   description:
     "AI-powered code change explanations for GitHub commits. Understand why code changed, not just what changed.",
   generator: "v0.app",
+  icons: {
+    icon: "/rect87.png",
+    shortcut: "/rect87.png",
+    apple: "/rect87.png",
+  },
 };
 
 export default function RootLayout({
@@ -24,6 +30,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script defer src="https://cloud.umami.is/script.js" data-website-id="2329264b-249a-4970-9c66-bc679cbea5d8" />
+      </head>
       <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"

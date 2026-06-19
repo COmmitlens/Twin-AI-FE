@@ -1,16 +1,20 @@
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Loader2 } from "lucide-react"
 
+interface ActionButton {
+  label: string
+  onClick: () => void
+  loading?: boolean
+  variant?: "default" | "outline" | "secondary" | "ghost" | "link" | "destructive"
+}
+
 interface WorkspaceHeaderProps {
   title: string
   subtitle?: string
   showBackButton?: boolean
   onBackClick?: () => void
-  actionButton?: {
-    label: string
-    onClick: () => void
-    loading?: boolean
-  }
+  actionButton?: ActionButton
+  actionButtons?: ActionButton[]
 }
 
 export function WorkspaceHeader({
@@ -19,7 +23,13 @@ export function WorkspaceHeader({
   showBackButton = false,
   onBackClick,
   actionButton,
+  actionButtons,
 }: WorkspaceHeaderProps) {
+  const buttons: ActionButton[] = [
+    ...(actionButtons ?? []),
+    ...(actionButton ? [actionButton] : []),
+  ]
+
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-4 min-w-0">
@@ -46,21 +56,26 @@ export function WorkspaceHeader({
         </div>
       </div>
 
-      {actionButton && (
-        <Button
-          onClick={actionButton.onClick}
-          disabled={actionButton.loading}
-          className="flex-shrink-0"
-        >
-          {actionButton.loading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {actionButton.label}
-            </>
-          ) : (
-            actionButton.label
-          )}
-        </Button>
+      {buttons.length > 0 && (
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {buttons.map((btn, i) => (
+            <Button
+              key={i}
+              variant={btn.variant ?? "default"}
+              onClick={btn.onClick}
+              disabled={btn.loading}
+            >
+              {btn.loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {btn.label}
+                </>
+              ) : (
+                btn.label
+              )}
+            </Button>
+          ))}
+        </div>
       )}
     </div>
   )

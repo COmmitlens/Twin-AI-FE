@@ -9,3 +9,4 @@ export { WorkspaceMembers } from "./workspace-members";
 export { InviteUserModal } from "./invite-user-modal";
 export { WorkspaceChatPanel } from "./workspace-chat-panel";
 export { WorkspaceSettingsPanel } from "./workspace-settings-panel";
+export { DMChatPanel } from "./dm-chat-panel";

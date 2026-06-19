@@ -173,3 +173,79 @@ export interface UpdateUserParam {
   language: string;
   username: string;
 }
+// ─── Direct Messaging ────────────────────────────────────────────────────────
+
+export interface DMConversation {
+  id: number;
+  workspace_id: number;
+  participant1_id: number;
+  participant2_id: number;
+  other_user_id: number;
+  other_user_name: string;
+  other_username: string;
+  unread_count: number;
+  last_message: string;
+  last_message_at: string;
+  created_at: string;
+}
+
+export interface DMMessage {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  sender_name: string;
+  content: string;
+  is_read: boolean;
+  created_at: string;
+}
+
+export interface StartConversationRequest {
+  workspace_id: number;
+  recipient_id: number;
+}
+
+export interface StartConversationResponse {
+  message: string;
+  data?: DMConversation;
+}
+
+export interface ListConversationsResponse {
+  message: string;
+  data?: DMConversation[];
+}
+
+export interface SendMessageRequest {
+  conversation_id: number;
+  content: string;
+}
+
+export interface SendMessageResponse {
+  message: string;
+  data?: DMMessage;
+}
+
+export interface ListMessagesResponse {
+  message: string;
+  data?: DMMessage[];
+}
+
+export interface MarkReadRequest {
+  conversation_id: number;
+}
+
+export interface MarkReadResponse {
+  message: string;
+}
+
+// WebSocket event payloads
+export interface DMWSNewMessageEvent {
+  event: "new_message";
+  message: DMMessage;
+}
+
+export interface DMWSMarkReadEvent {
+  event: "mark_read";
+  message: DMMessage;
+}
+
+export type DMWSEvent = DMWSNewMessageEvent | DMWSMarkReadEvent;

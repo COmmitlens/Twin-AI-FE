@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation"
 import { useState, useEffect } from "react"
+import { useAuth } from "@/lib/auth-context"
 import { Loader2, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
@@ -16,6 +17,7 @@ import {
   InviteUserModal,
   WorkspaceChatPanel,
   WorkspaceSettingsPanel,
+  DMChatPanel,
 } from "@/components/workspace"
 import {
   Repository,
@@ -32,6 +34,7 @@ type ViewType = "repos" | "commits" | "commitDetails"
 
 export default function WorkspacePage() {
   const params = useParams()
+  const { user } = useAuth()
 
   // Loading states
   const [loading, setLoading] = useState(false)
@@ -75,6 +78,13 @@ export default function WorkspacePage() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [inviteLoading, setInviteLoading] = useState(false)
 
+  // Slack state
+  const [slackConnected, setSlackConnected] = useState(false)
+  const [slackTeamName, setSlackTeamName] = useState<string | undefined>(undefined)
+
+  // DM state
+  const [dmRecipient, setDmRecipient] = useState<{ userId: number; name: string } | null>(null)
+
   // Fetch organization details
   const fetchOrgDetails = async () => {
     const id = params.id as string
@@ -103,7 +113,27 @@ export default function WorkspacePage() {
   useEffect(() => {
     fetchOrgDetails()
     fetchWorkspaceMembers()
+    fetchSlackStatus()
   }, [params.id])
+
+  // Fetch Slack connection status
+  const fetchSlackStatus = async () => {
+    const id = params.id as string
+    try {
+      const response = await workspaceAPI.getSlackStatus(id)
+      setSlackConnected(response.connected)
+      setSlackTeamName(response.slack_team_name)
+    } catch {
+      // Slack not connected — ignore error
+    }
+  }
+
+  // Handle connect to Slack — navigate directly (backend returns a redirect, XHR cannot follow cross-origin redirects)
+  const handleConnectToSlack = () => {
+    const id = params.id as string
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"
+    window.location.href = `${API_URL}/slack/install?workspace_id=${id}`
+  }
 
   // Handle connect to org
   const handleConnectToOrg = async () => {
@@ -304,8 +334,12 @@ export default function WorkspacePage() {
           <WorkspaceMembers
             members={members}
             loading={membersLoading}
+            currentUserEmail={user?.email}
             onInviteClick={() => setInviteModalOpen(true)}
             onRemoveMember={handleRemoveMember}
+            onMessageClick={(member) =>
+              setDmRecipient({ userId: member.user_id, name: member.name })
+            }
           />
         </div>
 
@@ -334,6 +368,26 @@ export default function WorkspacePage() {
                     onClick: handleConnectToOrg,
                     loading: connectLoading,
                   }
+                : undefined
+            }
+            actionButtons={
+              currentView === "repos" && !slackConnected
+                ? [
+                    {
+                      label: "Connect Slack",
+                      onClick: handleConnectToSlack,
+
+                      variant: "outline" as const,
+                    },
+                  ]
+                : currentView === "repos" && slackConnected && slackTeamName
+                ? [
+                    {
+                      label: `Slack: ${slackTeamName}`,
+                      onClick: () => {},
+                      variant: "outline" as const,
+                    },
+                  ]
                 : undefined
             }
           />
@@ -417,10 +471,23 @@ export default function WorkspacePage() {
       {/* Workspace Settings */}
       <WorkspaceSettingsPanel currentWorkspaceId={params.id as string} />
 
+      {/* DM Panel */}
+      <DMChatPanel
+        workspaceId={parseInt(params.id as string)}
+        currentUserId={parseInt(user?.id ?? "0")}
+        currentUserEmail={user?.email}
+        members={members}
+        initialRecipient={dmRecipient}
+        onInitialRecipientConsumed={() => setDmRecipient(null)}
+      />
+
       {/* Workspace AI Chat */}
       <WorkspaceChatPanel
         workspaceId={params.id as string}
-        onQuery={(question) => workspaceAPI.queryWorkspace(params.id as string, question)}
+        members={members}
+        onQuery={(question, author, dateRange) =>
+          workspaceAPI.queryWorkspace(params.id as string, question, author, dateRange)
+        }
       />
 
       {/* Invite User Modal */}

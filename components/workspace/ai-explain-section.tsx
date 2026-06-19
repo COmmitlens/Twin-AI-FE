@@ -52,7 +52,7 @@ export function AIExplainSection({
           <CardTitle className="text-lg">Ask AI</CardTitle>
         </div>
         <CardDescription className="text-sm">
-          Ask questions about this commit and get AI-powered explanations
+          Ask questions about this commit and get explanations
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
