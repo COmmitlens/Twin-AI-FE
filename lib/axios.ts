@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/v1";
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL:
+    process.env.NODE_ENV === "development" ? "http://localhost:8000/v1" : "/v1",
   withCredentials: true, // CRITICAL: Send HTTP-only cookies with requests
   headers: {
     "Content-Type": "application/json",
@@ -19,7 +19,7 @@ api.interceptors.response.use(
       // Don't redirect if it's the session validation endpoint
       // Let the auth context handle it
       const isValidateEndpoint = error.config?.url?.includes("/auth/validate");
-      
+
       if (!isValidateEndpoint) {
         // Token expired or invalid - redirect to login
         if (
@@ -31,7 +31,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 export default api;
