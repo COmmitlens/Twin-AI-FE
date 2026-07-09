@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 
+// Next.js freezes header values into .next/routes-manifest.json at build time —
+// they can't vary per deployment (per-customer API_URL) at container start.
+// connect-src allows any http(s) origin by scheme instead of a fixed host, since
+// each self-hosted deployment talks to its own backend, decided only at runtime
+// via window.__ENV__ (see lib/env.ts / app/layout.tsx).
 const securityHeaders = [
   // Prevent clickjacking — only allow iframes from same origin
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -26,7 +31,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: https:",
       "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' ws: wss: http://localhost:8000 https: https://cloud.umami.is",
+      "connect-src 'self' ws: wss: http: https:",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",

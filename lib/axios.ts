@@ -1,10 +1,8 @@
 import axios from "axios";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/v1";
+import { getApiUrl } from "@/lib/env";
 
 const api = axios.create({
-  baseURL:
-    process.env.NODE_ENV === "development" ? "http://localhost:8000/v1" : "/v1",
+  baseURL: getApiUrl(),
   withCredentials: true, // CRITICAL: Send HTTP-only cookies with requests
   headers: {
     "Content-Type": "application/json",

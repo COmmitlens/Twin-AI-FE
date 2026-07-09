@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation"
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { getApiUrl } from "@/lib/env"
 import { Loader2, AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
@@ -131,8 +132,7 @@ export default function WorkspacePage() {
   // Handle connect to Slack — navigate directly (backend returns a redirect, XHR cannot follow cross-origin redirects)
   const handleConnectToSlack = () => {
     const id = params.id as string
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1"
-    window.location.href = `${API_URL}/slack/install?workspace_id=${id}`
+    window.location.href = `${getApiUrl()}/slack/install?workspace_id=${id}`
   }
 
   // Handle connect to org

@@ -11,6 +11,11 @@ import { Toaster } from "@/components/ui/sonner";
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
+// Every page must be server-rendered per-request (not prerendered as static
+// HTML at build time), so process.env.API_URL below reflects the runtime
+// container's value, not whatever was set during `pnpm build`.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "CommitLens - Understand Code Changes Instantly",
   description:
@@ -31,6 +36,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <Script
+          id="runtime-env"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `window.__ENV__=${JSON.stringify({
+              API_URL: process.env.API_URL || "http://localhost:8000/v1",
+            }).replace(/</g, "\\u003c")};`,
+          }}
+        />
         <Script defer src="https://cloud.umami.is/script.js" data-website-id="2329264b-249a-4970-9c66-bc679cbea5d8" />
       </head>
       <body className="font-sans antialiased">

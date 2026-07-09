@@ -14,9 +14,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Pass build-time env variables
-ARG NEXT_PUBLIC_API_URL=/v1
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN pnpm build
 
 # ---- Stage 3: Production runner ----
@@ -25,6 +22,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Backend URL — read at container start, override via `docker run -e` / compose `environment:`
+ENV API_URL=http://localhost:8000/v1
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs

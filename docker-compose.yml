@@ -1,0 +1,10 @@
+services:
+  frontend:
+    image: ghcr.io/commitlens/twin-ai-fe:dev
+    ports:
+      - "3000:3000"
+    environment:
+      # Must be reachable from the browser, not just from inside this
+      # container's network — a Docker service name like http://backend:8000
+      # will not resolve for the browser.
+      API_URL: http://localhost:8000/v1

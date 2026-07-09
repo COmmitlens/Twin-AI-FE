@@ -2,13 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { DMWSEvent, DMMessage } from "@/lib/types/workspace";
-
-const WS_BASE_URL = (() => {
-  const apiUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
-  // Convert http(s) → ws(s) for the WebSocket connection
-  return apiUrl.replace(/^http/, "ws");
-})();
+import { getWsUrl } from "@/lib/env";
 
 type ConnectionStatus = "connecting" | "connected" | "disconnected" | "error";
 
@@ -59,7 +53,7 @@ export function useDMWebSocket({
     // Clean up any existing connection before opening a new one
     disconnect();
 
-    const url = `${WS_BASE_URL}/dm/ws?conversation_id=${conversationId}`;
+    const url = `${getWsUrl()}/dm/ws?conversation_id=${conversationId}`;
     const ws = new WebSocket(url);
     wsRef.current = ws;
     setStatus("connecting");

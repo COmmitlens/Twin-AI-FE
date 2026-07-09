@@ -9,6 +9,7 @@ import { Code2, Mail, Lock, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import api from "@/lib/axios";
+import { getApiUrl } from "@/lib/env";
 
 interface LoginFormData {
   email: string;
@@ -107,7 +108,7 @@ export default function LoginPage() {
 
   const handleGithubLogin = () => {
     setIsGithubLoading(true);
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/github`;
+    window.location.href = `${getApiUrl()}/auth/github`;
   };
 
   const handleGoogleLogin = async () => {

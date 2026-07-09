@@ -4,6 +4,7 @@ import React from "react";
 
 import { useState, useEffect } from "react";
 import api from "@/lib/axios";
+import { getApiUrl } from "@/lib/env";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
@@ -139,7 +140,7 @@ export default function SignUpPage() {
 
    const handleGithubLogin = () => {
     setIsGithubLoading(true);
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/github`;
+    window.location.href = `${getApiUrl()}/auth/github`;
   };
 
 
