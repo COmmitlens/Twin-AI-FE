@@ -23,7 +23,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 # Backend URL — read at container start, override via `docker run -e` / compose `environment:`
-ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://commitlens.tech/v1}
+ENV NEXT_PUBLIC_API_URL=http://commitlens.tech/v1
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
