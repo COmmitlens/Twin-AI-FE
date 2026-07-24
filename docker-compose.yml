@@ -7,4 +7,7 @@ services:
       # Must be reachable from the browser, not just from inside this
       # container's network — a Docker service name like http://backend:8000
       # will not resolve for the browser.
-      API_URL: http://localhost:8000/v1
+      # Defaults to localhost for local dev; override by setting API_URL
+      # before running compose (e.g. `API_URL=https://commitlens.tech/v1 docker compose up -d`)
+      # or via a .env file in this directory.
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://commitlens.tech/v1}
