@@ -10,4 +10,4 @@ services:
       # Defaults to localhost for local dev; override by setting API_URL
       # before running compose (e.g. `API_URL=https://commitlens.tech/v1 docker compose up -d`)
       # or via a .env file in this directory.
-      NEXT_PUBLIC_API_URL: http://commitlens.tech/v1  
+      NEXT_PUBLIC_API_URL: https://commitlens.tech/v1  

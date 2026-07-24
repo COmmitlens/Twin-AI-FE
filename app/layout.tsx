@@ -41,7 +41,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `window.__ENV__=${JSON.stringify({
-              API_URL: process.env.API_URL || "http://localhost:8000/v1",
+              NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/v1",
             }).replace(/</g, "\\u003c")};`,
           }}
         />
