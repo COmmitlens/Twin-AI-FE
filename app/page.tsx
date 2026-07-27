@@ -76,7 +76,7 @@ export default function Home() {
               <h3 className="text-xl font-semibold">Hidden Risk</h3>
               <p className="text-muted-foreground">
                 Identifying if code introduces risk or technical debt requires
-                deep analysis that's often overlooked in code reviews.
+                deep analysis that&apos;s often overlooked in code reviews.
               </p>
             </div>
           </div>
@@ -210,7 +210,7 @@ export default function Home() {
               <h3 className="text-xl font-semibold">Maintainers</h3>
               <p className="text-muted-foreground">
                 Onboarding new contributors is easier when they can instantly
-                understand the "why" behind code decisions.
+                understand the &quot;why&quot; behind code decisions.
               </p>
             </div>
             <div className="bg-secondary rounded-lg p-8 border border-border space-y-4">
@@ -227,7 +227,7 @@ export default function Home() {
       {/* Why It's Different */}
       <section className="max-w-6xl mx-auto px-6 py-16 border-t border-border">
         <div className="space-y-8">
-          <h2 className="text-4xl font-bold">Why it's different</h2>
+          <h2 className="text-4xl font-bold">Why it&apos;s different</h2>
           <div className="space-y-6">
             <div className="bg-secondary rounded-lg p-8 border border-border">
               <h3 className="text-xl font-semibold mb-3">
@@ -266,7 +266,7 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-6 py-24 border-t border-border text-center">
         <div className="space-y-6">
           <h2 className="text-5xl font-bold text-balance">
-            Code moves fast. Understanding it shouldn't be slow.
+            Code moves fast. Understanding it shouldn&apos;t be slow.
           </h2>
           <p className="text-xl text-muted-foreground">
             Less time reading diffs. More time building.

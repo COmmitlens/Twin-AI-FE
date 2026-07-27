@@ -166,7 +166,7 @@ function AcceptInviteContent() {
           </div>
           <CardTitle className="text-2xl">Workspace Invitation</CardTitle>
           <CardDescription>
-            You've been invited to join a workspace
+            You&apos;ve been invited to join a workspace
           </CardDescription>
         </CardHeader>
 

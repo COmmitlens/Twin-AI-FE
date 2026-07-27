@@ -405,7 +405,7 @@ export default function WorkspacePage() {
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              No organization connected to this workspace. Click "Connect to org" to get started.
+              No organization connected to this workspace. Click &quot;Connect to org&quot; to get started.
             </AlertDescription>
           </Alert>
         )}

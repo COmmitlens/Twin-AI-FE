@@ -18,7 +18,7 @@ export function Hero() {
 
         <p className="text-xl text-muted-foreground text-balance">
           We automatically analyze GitHub commits and explain the purpose,
-          reasoning, and potential impact of each change — so engineers don't
+          reasoning, and potential impact of each change — so engineers don&apos;t
           have to dig through diffs.
         </p>
 
