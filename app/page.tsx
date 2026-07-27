@@ -303,6 +303,9 @@ export default function Home() {
             </a>
           </div>
         </div>
+        <div className="max-w-6xl mx-auto px-6 pb-8 text-sm text-muted-foreground">
+          &copy; {new Date().getFullYear()} CommitLens. All rights reserved.
+        </div>
       </footer>
     </div>
   );
