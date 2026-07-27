@@ -6,6 +6,8 @@ import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/hero";
 
 export default function Home() {
+  const env = process.env.NEXT_PUBLIC_ENVIRONMENT;
+  console.log("Environment:", env);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
