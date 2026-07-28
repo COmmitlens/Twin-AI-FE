@@ -19,6 +19,7 @@ COPY . .
 # So we bake a placeholder instead of a real URL, and swap it for the real
 # value at container start (see docker-entrypoint.sh).
 ENV NEXT_PUBLIC_API_URL=__RUNTIME_NEXT_PUBLIC_API_URL__
+ENV NEXT_PUBLIC_ENVIRONMENT=__RUNTIME_NEXT_PUBLIC_ENVIRONMENT__
 
 RUN pnpm build
 
