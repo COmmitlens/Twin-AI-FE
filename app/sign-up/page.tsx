@@ -3,13 +3,14 @@
 import React from "react";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import api from "@/lib/axios";
 import { getApiUrl } from "@/lib/env";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
-import { Code2, Mail, Lock, User, AlertCircle } from "lucide-react";
+import { Mail, Lock, User, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 
@@ -153,8 +154,8 @@ export default function SignUpPage() {
             href="/"
             className="flex items-center gap-2 hover:opacity-80 transition"
           >
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Code2 className="w-5 h-5 text-primary-foreground" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+              <Image src="/rect87.png" alt="CommitLens Logo" width={32} height={32} className="rounded-lg" />
             </div>
             <span className="font-bold text-lg">CommitLens</span>
           </Link>

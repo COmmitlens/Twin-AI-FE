@@ -274,12 +274,15 @@ export default function Home() {
             Less time reading diffs. More time building.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button
-              size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-8"
-            >
-              Start Free <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+           <Button
+            size="lg"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-8"
+            onClick={() => {
+              window.location.href = "/sign-up";
+            }}
+          >
+            Start Free <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
           </div>
         </div>
       </section>
